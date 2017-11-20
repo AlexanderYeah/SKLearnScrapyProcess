@@ -10,4 +10,4 @@
 1 使用pip beautiful 的安装   
 > pip install beautifulsoup4  
 
-2 
+2 beautiful 的两个核心方法 findAll 和 find 的使用
