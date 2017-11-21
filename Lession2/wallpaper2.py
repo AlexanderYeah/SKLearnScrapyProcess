@@ -14,6 +14,7 @@ import os
     爬取壁纸
     http://desk.zol.com.cn/jieri/2880x1800_p4/
 """
+basicUrl = "http://desk.zol.com.cn"
 baseUrl = 'http://desk.zol.com.cn/jieri/2880x1800_p4/';
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0'
 target_path = '/Users/alexander/Desktop/About Python/抓取资料/downImg/';
@@ -73,23 +74,31 @@ def process_html(html):
          # 拼接上baseUrl
          img_group_url = base_img_url + pic_href;
          imgUrl_list.append(img_group_url);
-
+        # print(img_group_url);
          # 紧接着处理数据
          get_one_group_img(img_group_url);
 
 
 
 
-#  3 要单独写一个函数去处理套图 还是要发请求
+#  3 要单独写一个函数去处理套图入口地址 还是要发请求
 """
     获取套图的入口地址，返回HTML
     1> 筛选出一套图有多少张
     2> 获取下一页的连接
+
+    这个函数的作用，就是给出一个套图的入口,循环递归获取对应的url地址 返回整个套图的url 地址
+
 """
+
 def get_one_group_img(url):
     req3 = urllib.request.Request(url);
     req3.add_header('User-Agent',user_agent);
     res3 = urllib.request.urlopen(req3);
+
+    # 装套图中每一张的url list
+    groups_img_url_list = [];
+
     # 还是要筛选数据
     bsObj3 = BeautifulSoup(res3.read().decode('gbk'));
     # 筛选出数量
@@ -99,7 +108,52 @@ def get_one_group_img(url):
     group_img_count = temp1[0:-1];
     # 3.2 获取下一张的连接  id = pageNext
     next_page_url = bsObj3.find(id='pageNext')['href'];
-    print(next_page_url);
+    temp_img_url = basicUrl + next_page_url;
+
+    # 现将第一张和第二张装入 list
+    groups_img_url_list.append(url);
+    groups_img_url_list.append(basicUrl + next_page_url);
+
+    # 此处还是要进行for 循环 递归 找到对应数量的url
+    """
+        在这个函数中 已经拿到本页的URL 以及下一页 的URL，所以还要循环 总数量 - 2 次数即可得到全部图片
+    """
+    for item in range(1,int(group_img_count) - 1):
+        temp_img_url = get_next_page_url(temp_img_url);
+        groups_img_url_list.append(temp_img_url);
+
+    # 此时得到套图所有的地址，获取每一张图片的url 地址
+    res_imgs_list =  get_every_single_img_url(groups_img_url_list);
+    # 获取到每一张图片的url 地址，那么就进行写入本地操作
+    write_img(target_path,res_imgs_list)
+
+
+# 4 传入一张图片的连接地址 获取其本身下一张图片url 地址
+def get_next_page_url(url):
+    req4 = urllib.request.Request(url);
+    req4.add_header('User-Agent',user_agent);
+    res4 = urllib.request.urlopen(req4);
+
+    bsObj4 = BeautifulSoup(res4.read().decode('gbk'));
+    #
+    next_page_url = bsObj4.find(id='pageNext')['href'];
+    return  basicUrl+next_page_url;
+
+# 5 传入套图的每一个网页地址 再去请求获取图片链接
+def get_every_single_img_url(url_list):
+
+    res_single_img_list = [];
+    for item  in  url_list:
+        req5 = urllib.request.Request(item);
+        req5.add_header('User-Agent',user_agent);
+        res5 = urllib.request.urlopen(req5);
+        bsObj = BeautifulSoup(res5.read().decode('gbk'));
+        # id 为 bigImg
+        sing_img_url= bsObj.find(id='bigImg')['src'];
+        res_single_img_list.append(sing_img_url);
+
+
+    return res_single_img_list;
 
 
 
@@ -134,9 +188,13 @@ def write_img(path,img_list):
 
 
 if __name__ == '__main__':
+
     html = download_url(baseUrl,user_agent,4);
     process_html(html);
+    #以下一行代码是 给出一个单个套图的入口地址，去下载整个套图图片的操作 目的是测试
 
-    # 创建个目录
+    #get_one_group_img("http://desk.zol.com.cn/bizhi/6886_85845_4.html");
+
+
 
 
