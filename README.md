@@ -5,5 +5,6 @@ Learn Web Scraping With Python
 
 2 -- 11.19 号，周日，爬虫的基本步骤，BeautifulSoup 的初步了解 --> [Lession1](https://github.com/AlexanderYeah/SKLearnScrapyProcess/blob/master/Lession1/lession1.md)  
 3 -- 11.20 号 壁纸网获取套图入口下载。--> [成功第一步，准备思路，🤣🤣🤣](https://github.com/AlexanderYeah/SKLearnScrapyProcess/blob/master/Lession2/lession2.md)   
-4 -- 11.21 号 睡前push代码，签到。今天这么困，最近感觉很缺觉。😫😫😫
+4 -- 11.21 号 睡前push代码，签到。今天这么困，最近感觉很缺觉。😫😫😫  
+5 -- 11.22 号 会顾了多线程的使用，貌似添加失败。并且进程卡死不知怎的。-->[待解决](https://github.com/AlexanderYeah/SKLearnScrapyProcess/blob/master/Lession3/Lession3.md)
 
